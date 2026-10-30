@@ -2,3 +2,5 @@ discipline/
 discipline-back/
 discipline-py/
 _archive/
+*.dump
+__pycache__/
