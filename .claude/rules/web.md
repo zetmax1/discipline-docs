@@ -13,4 +13,5 @@ paths:
 - Accessibility: keyboard navigation, labeled inputs, WCAG AA contrast.
 - Show the server's error message (translated from its code), never a generic "failed".
 - No new dependency without checking its license and size.
-- Tests: vitest for logic; one Playwright E2E per main flow (Playwright isn't set up yet: the first E2E adds it); screenshots at 390 px and 1440 px.
+- Feature-flagged UI goes inside `<Feature flag="F…">` (`src/components/Feature.tsx`) or behind `useFeature`; off unless `GET /api/features` lists it.
+- Tests: vitest for logic; one Playwright E2E per main flow in `e2e/` (API mocked with `mockApi`, projects at 390 px and 1440 px; part of `npm run check`).

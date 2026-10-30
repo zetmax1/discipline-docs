@@ -13,5 +13,6 @@ paths:
 - Rate limits and throttles live in Redis. On Redis errors they log and fail open, except `/api/auth/*` and the login throttle, which fail closed with 503.
 - Calls to analytics carry the short-lived internal JWT; never forward client query strings or raw bodies.
 - Logs are JSON with the request id; never log tokens, passwords, emails or request bodies.
-- Responses that the web reads are validated in tests against `../discipline/contracts/` (no Go contract test exists yet; the analytics schema is checked by the web and analytics tests).
+- Responses that the web reads are validated in handler tests against `../discipline/contracts/` with `contracttest.Validate` (`internal/contracttest`; `CONTRACTS_DIR` overrides the path). Example: `internal/handlers/feature_handler_test.go`.
+- New features sit behind `FEATURE_<id>` (`config.EnabledFeatures`, served at `GET /api/features`).
 - Tests: `go test -race` with httptest. DB/Redis tests skip without `TEST_DATABASE_URL` / `TEST_REDIS_URL`; `make test` sets both, and any skip fails the check.

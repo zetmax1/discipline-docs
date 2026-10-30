@@ -34,11 +34,23 @@ Each repo has one check command that runs lint, types, tests and vulnerability/s
 ## Workflow
 - Work only on what the current task names. No drive-by refactors.
 - Test first: a failing test that shows the behaviour, then the code, then green. Never weaken a check or delete a failing test to get green.
-- Branch `feat/M{N}` from `main` in each repo you touch, same name everywhere. One commit per story or fix: `feat(M{N}): …` / `fix(M{N}): …`. Never push or merge without being told to.
+- **Base branch:** `main` lacks the phase 1–5 fixes. Until `fix/phase-5` is merged into `main`, every feature branch starts from `fix/phase-5` in each repo (the "base branch" below). After that merge, the base branch is `main` again.
+- Branch `feat/M{N}` from the base branch in each repo you touch, same name everywhere. One commit per story or fix: `feat(M{N}): …` / `fix(M{N}): …`. Never push or merge without being told to.
 - A contract change updates every affected repo in the same milestone; the design doc's rollout section gives the deploy order.
 - Secrets: never hardcoded, printed or logged. Required secrets have no defaults; the app refuses to start without them. Keep each repo's `.env.example` current (names only).
 - Never run anything against production or staging.
 - If a decision isn't in the task or the design doc: stop and ask. Don't guess.
+
+## Feature workflow
+A feature prompt names an id (`F1`…`F14`) and spec items in `docs/product/milestones/`. Read only `VISION.md` and those items.
+1. **Design** — write `docs/design/<id>.md`: stories with acceptance criteria; migrations (up + down); API + contract schemas; screens at 390 px and desktop with empty/loading/error/offline states; i18n keys; edge cases (timezone/DST, midnight, offline, several devices, new user); test plan; flag name; deploy order; open questions. Then **STOP** and wait for "go".
+2. **Build** (after "go") — branch `feat/<id>` from the base branch in each touched repo.
+   - Everything behind `FEATURE_<id>` (API env var → `GET /api/features`; the web hides disabled features).
+   - Test first; one commit per story: `feat(<id>): …`.
+   - Run each touched repo's check command.
+   - Playwright screenshots at 390 / 1440 px into `docs/design/<id>-screens/`.
+   - Report ≤ 25 lines, ending with owner steps: env vars, migrations, flags, deploy order.
+3. Never push or merge.
 
 ## Product rules (from VISION.md)
 - Every date/time is computed in the user's timezone; tests cover midnight and DST.
