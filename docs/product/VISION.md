@@ -28,7 +28,8 @@ Morning check-in (~10 s: sleep, sleep quality, energy) → Today: Top-3 prioriti
 | **Task / Top-3** | A to-do item (title, done, optional due date, optional linked block). Top-3 = up to 3 ordered tasks chosen for a day. |
 | **Commitment** | Recurring fixed time the planner must not use (sleep, university, work, prayer). Weekdays + start/end + validity dates. End before start = crosses midnight, split at midnight when expanded. |
 | **Category** | User-editable name, color, icon + a fixed **kind**: `focus`, `study`, `admin`, `exercise`, `rest`, `personal`. Metrics and rules use **kind**, never the name. |
-| **Goal** | Weekly target minutes per category, plus max focus minutes per day and the preferred rest day. |
+| **Weekly target** | Target minutes per category per week, plus max focus minutes per day and the preferred rest day. |
+| **Goal** | A long-term outcome (title, why, target date, optional measurable target) broken into milestones and tasks. Tasks and blocks can link to a goal; time per goal = completed actual minutes of linked blocks. |
 | **Check-in** | Morning: sleep start/end, quality 1–5, energy 1–5. Evening: shutdown. |
 | **Focus session** | A timed work interval (inside or outside a block) followed by a break. Server stores start time; clients compute the countdown. |
 | **Plan draft** | A versioned weekly suggestion. Accepting it creates blocks with `source=plan` and a `plan_id`. |
@@ -52,7 +53,7 @@ Event names are defined once in `discipline/contracts/` and nowhere else.
 ## Architecture constraints
 - Three repos: `discipline` (web, React/TS, PWA), `discipline-back` (api, Go/Gin, owns the DB and auth; from M4 also the worker as `cmd/worker`, Go + Asynq on Redis, sharing the API's models and migrations), `discipline-py` (analytics, FastAPI: metrics and the learning engine, read-only DB access).
 - Postgres + Redis. Versioned migrations only (goose), each with a Down step.
-- API contracts live in `discipline/contracts/` (JSON Schema generated from the web's zod schemas). Backend tests validate their responses against these files (path from `CONTRACTS_DIR`, default `../discipline/contracts`).
+- API contracts live in `discipline/contracts/` (JSON Schema generated from the web's zod schemas). Python tests validate against them via `ANALYTICS_CONTRACT`; Go contract tests for the endpoints the web reads are added in M1.
 - A change that touches several repos uses the same branch name in each (`feat/M{N}`); the design doc's rollout section gives the deploy order.
 - Each repo has one local check command (`make check` / `npm run check`) that runs lint, types and tests. CI/CD comes later and will call the same commands.
 - Each milestone ships behind a feature flag (`FEATURE_M{N}`) until accepted.
@@ -66,11 +67,11 @@ Medical advice; ads or selling data; biometric data; leaderboards by hours; auto
 | ID | Theme | Depends on |
 |---|---|---|
 | M1 | Public foundation: auth v2, onboarding, settings, i18n, mobile shell, legal, export/delete, admin basics | — |
-| M2 | Planner v2: categories, persisted commitments & goals, block lifecycle, week view, recurring blocks, Top-3 | M1 |
+| M2 | Planner v2: categories, persisted commitments & weekly targets, calendar (ICS) import, block lifecycle, week view, recurring blocks, Top-3 | M1 |
 | M3 | Daily loop: morning check-in, Today screen, focus sessions, block check-ins, evening shutdown | M2 |
 | M4 | Worker, notifications, Telegram bot, web push, beta gate → **closed beta starts** | M3 |
-| M5 | Habits, streak rules, rest & balance warnings, rest-day mode | M4 |
+| M5 | Habits & streaks, long-term goals (time per goal), rest & balance warnings, rest-day mode | M4 |
 | M6 | Learning engine, plan drafts, insights (client charts), weekly review | M5 + ≥2 weeks of beta data |
 | M7 | Language learning: licensed content, placement, FSRS, games | M4 |
 | M8 | Motivation (XP, achievements, coins), mini-games, Telegram Mini App | M6, M7 |
-| M9 | Social (opt-in), AI coach (opt-in), admin analytics — re-scope after beta | M8 |
+| M9 | Integrations (Google Calendar sync, GitHub/WakaTime auto-logging), social (opt-in), AI coach (opt-in), admin analytics — re-scope after beta | M8 |
