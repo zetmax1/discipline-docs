@@ -33,3 +33,4 @@ Core daily loop flows, idempotent session replays, and offline sync mechanics ar
   2. Offline check-in made before midnight counts for the day it syncs if submitted across midnight.
   3. Top-3 and "later" actions in shutdown are deferred to F10.
 - **Recommendation:** Owner to confirm these product decisions as noted in the status.
+

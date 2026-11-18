@@ -30,3 +30,4 @@ All acceptance criteria S1–S6 are implemented; error codes are stable and veri
 - **Location:** `discipline/src/index.css:12`
 - **Description:** Five token values were adjusted to satisfy WCAG AA 4.5:1 contrast requirements (tested in `src/theme/contrast.test.ts`).
 - **Recommendation:** Confirm token aesthetics with the product owner before removing the `FEATURE_F12A` flag.
+
