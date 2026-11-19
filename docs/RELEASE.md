@@ -36,6 +36,28 @@ Tools in this folder (`docs/release/`, Python 3 standard library only, never pri
 - Rate limit on `/api/auth/*`: 5 requests a minute per IP. Wait a minute before re-running
   `smoke.py` (each run makes two auth calls on staging, one on production).
 
+### Migrations run from the pre-deploy step (`chore/predeploy-migrate` onwards)
+
+Once `chore/predeploy-migrate` is merged, `discipline-back`'s `railway.json` runs
+`["/app/migrate", "up"]` as the deploy's `preDeployCommand`: Railway runs it in the new image,
+once, before that version takes traffic, so the schema is migrated by the same build that will
+serve it. A failed pre-deploy step stops the deploy and leaves the old version serving.
+
+- **Back up the database before any destructive migration** (a drop, a type change, a backfill
+  that rewrites rows), exactly as in P1, and before the first deploy that carries one. The
+  pre-deploy step runs unattended, with nobody watching the output, and `migrate down` cannot
+  undo every migration — the dump is the only way back.
+- **Check on staging that the pre-deploy step reaches the database over the private network**
+  before trusting it in production: the pre-deploy container gets the service's own variables, so
+  `DATABASE_URL` (or the `DB_*` variables) must point at `<postgres>.railway.internal` with the
+  SSL mode that host accepts, not at a public URL that may not resolve from it. Deploy the api to
+  staging, then Deployments → the new deployment → the **pre-deploy** logs: they must show the
+  migrations applied (or "no change"), not a connection error, and the deployment must go on to
+  pass its healthcheck.
+- The manual `go run ./cmd/migrate … up` steps below (S6, P4) stay the rehearsal and the fallback:
+  run them when a release needs the schema migrated before the new image exists, and to read
+  `status`.
+
 ### Dashboard-only settings (not covered by `railway.json`)
 
 Check these once per environment (service → Settings):
