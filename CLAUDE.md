@@ -2,6 +2,8 @@
 
 Public habit/discipline app in three separate git repos inside this folder:
 - `discipline/` — web (React/TS, PWA). Owns `contracts/` (JSON Schema generated from zod).
+  On GitHub this repo is called `discipline-front`; clone it into a folder named `discipline`,
+  because the other repos' contract tests read `../discipline/contracts`.
 - `discipline-back/` — API (Go/Gin), owns the DB, auth and migrations. From M4 also `cmd/worker`.
 - `discipline-py/` — analytics (FastAPI), read-only DB access.
 This folder itself only holds `docs/`, `.claude/` and this file (its own docs-only git repo). Ignore `_archive/`.
@@ -34,7 +36,7 @@ Each repo has one check command that runs lint, types, tests and vulnerability/s
 ## Workflow
 - Work only on what the current task names. No drive-by refactors.
 - Test first: a failing test that shows the behaviour, then the code, then green. Never weaken a check or delete a failing test to get green.
-- **Base branch:** `main` lacks the phase 1–5 fixes. Until `fix/phase-5` is merged into `main`, every feature branch starts from `fix/phase-5` in each repo (the "base branch" below). After that merge, the base branch is `main` again.
+- **Base branch:** `main` in every repo. Branch from it, and rebase on it before asking for a merge.
 - Branch `feat/M{N}` from the base branch in each repo you touch, same name everywhere. One commit per story or fix: `feat(M{N}): …` / `fix(M{N}): …`. Never push or merge without being told to.
 - A contract change updates every affected repo in the same milestone; the design doc's rollout section gives the deploy order.
 - Secrets: never hardcoded, printed or logged. Required secrets have no defaults; the app refuses to start without them. Keep each repo's `.env.example` current (names only).
@@ -50,7 +52,11 @@ A feature prompt names an id (`F1`…`F14`) and spec items in `docs/product/mile
    - Run each touched repo's check command.
    - Playwright screenshots at 390 / 1440 px into `docs/design/<id>-screens/`.
    - Report ≤ 25 lines, ending with owner steps: env vars, migrations, flags, deploy order.
-3. Never push or merge.
+3. **Deploy** — Railway deploys each repo on its own. Merge order: `discipline-back`, wait until
+   its deploy is healthy, then `discipline-py`, then `discipline`. Every change must work with the
+   previous schema and the previous version of the other services
+   (expand → migrate → switch → contract).
+4. Never push or merge.
 
 ## Product rules (from VISION.md)
 - Every date/time is computed in the user's timezone; tests cover midnight and DST.
