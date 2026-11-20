@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F15 prototypes</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 32px; color: #222; background: #fafafa; }
+  h1 { font-size: 22px; } h2 { font-size: 17px; margin-top: 28px; }
+  table { border-collapse: collapse; } td, th { padding: 4px 12px; border-bottom: 1px solid #ddd; text-align: left; }
+</style>
+</head>
+<body>
+<h1>F15 — visual refresh prototypes</h1>
+<p>Standalone pages, not the app. Each direction is one stylesheet over the same markup. Open them through a local server
+(for example <code>python3 -m http.server</code> in this folder) so the fonts load. Design: <code>../F15.md</code>.</p>
+<script>
+  const rows = [['A — Morning Paper', 'a-morning-paper.html'], ['B — Instrument', 'b-instrument.html']];
+  const cell = (f, s, t, l) => `<a href="${f}?screen=${s}&theme=${t}&lang=${l}">${l}</a>`;
+  document.write(rows.map(([name, f]) => `<h2>${name}</h2><table><tr><th></th><th>Light</th><th>Dark</th></tr>` +
+    ['today', 'planner'].map(s => `<tr><td>${s}</td>` + ['light', 'dark'].map(t =>
+      `<td>${['en', 'uz', 'ru'].map(l => cell(f, s, t, l)).join(' · ')}</td>`).join('') + '</tr>').join('') + '</table>').join(''));
+</script>
+</body>
+</html>
