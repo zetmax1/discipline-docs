@@ -450,15 +450,23 @@ name, URL, host or UID. Replays (`Idempotency-Key`) record nothing twice.
 - **Owner steps:** `openssl rand -base64 32` → Railway variable `CALENDAR_URL_KEY` on the API
   service (staging and production get different keys); no other new env vars.
 
-## 12. Open questions (owner)
+## 12. Open questions (owner) — answered 2026-11-20
+
 1. **Rest day and max focus in the generator.** Spec #9 keeps the current logic. Recommend a
    minimal use now: no focus/study on the rest day, and focus capped per day at
    `maxFocusMinPerDay` (overflow goes to other days or shortfall). Or store only and wait for M6?
+   **Answer: yes, minimal.** The generator plans **nothing** on the rest day (not only no
+   focus/study) and caps focus per day at `maxFocusMinPerDay`.
 2. **Hatched commitments in F13's Day/Week views** (M2 #6 wording). Recommend yes in F9a: the
    views call `GET /commitments/occurrences` for the visible range; a small web-only story.
    Or a separate follow-up?
+   **Answer: yes, as part of F9a.** Commitments show as a hatched background in F13's Day and
+   Week views.
 3. **Branch base.** F13 is not merged into `main` yet. Build F9a only after F13 merges
    (recommended), or branch `feat/F9a` from `feat/F13` and rebase later?
+   **Answer: `feat/F9a` branches from `main` after F13 is merged.**
 4. **Calendar exceptions (EXDATE, moved single instances).** Recommend ignoring them in F9a with a
    visible note (holidays stay blocked; the user can still plan there). The alternative is a
    `commitment_exceptions` table (like `recurring_exceptions`), roughly +1 day of work.
+   **Answer: ignore them, with a visible note.** Holidays and moved single classes are not
+   imported as exceptions; no `commitment_exceptions` table now.
