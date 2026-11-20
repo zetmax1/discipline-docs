@@ -1,0 +1,98 @@
+/*
+ * F15 direction B, "Instrument": cool slate, ink and indigo; crisp hairlines, square corners,
+ * numbers you can read at a glance. Font: IBM Plex Sans (SIL OFL 1.1). Tokens are HSL triplets,
+ * the same format as the app's index.css; in the app they sit under the F15 root attribute.
+ */
+@import url('fonts/ibm-plex-sans.css');
+:root {
+  --sidebar: 0 0% 100%;
+  --nav-active: 231 68% 94%;
+  --nav-active-foreground: 233 65% 39%;
+  --session-bg: 216 38% 97%;
+  --today-col: 228 100% 98%;
+  --border-strong: 212 14% 58%;
+  --background: 216 26% 96%;
+  --foreground: 215 40% 9%;
+  --card: 0 0% 100%;
+  --muted: 213 26% 93%;
+  --muted-foreground: 212 14% 36%;
+  --border: 212 22% 86%;
+  --primary: 232 61% 49%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 216 25% 92%;
+  --secondary-foreground: 215 40% 9%;
+  --accent: 173 48% 89%;
+  --accent-foreground: 176 77% 17%;
+  --ring: 232 61% 49%;
+  --destructive: 4 65% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --cat-focus: 232 61% 49%;
+  --cat-study: 269 54% 50%;
+  --cat-admin: 213 14% 41%;
+  --cat-exercise: 161 83% 25%;
+  --cat-rest: 176 84% 27%;
+  --cat-personal: 333 49% 48%;
+  --status-done: 161 83% 25%;
+  --status-done-tint: 157 42% 93%;
+  --status-partial: 38 100% 28%;
+  --status-partial-tint: 39 79% 92%;
+  --status-skipped: 213 12% 43%;
+  --status-skipped-tint: 214 26% 95%;
+  --rest-tint: 174 44% 92%;
+  --font: 'IBM Plex Sans Variable', system-ui, sans-serif;
+  --fw-body: 400; --fw-medium: 500; --fw-heading: 600; --fw-timer: 500; --lh-body: 1.5;
+  --fs-xs: .75rem; --fs-sm: .8125rem; --fs-body: .9375rem; --fs-btn: .875rem; --fs-h3: 1rem; --fs-h2: 1.25rem; --fs-h1: 1.625rem;
+  --fs-brand: .875rem; --fs-timer: 4.25rem; --fs-timer-phone: 3.5rem;
+  --tracking-heading: -.01em; --tracking-brand: .14em; --case-brand: uppercase; --case-label: uppercase; --tracking-label: .06em;
+  --tracking-time: .02em; --tracking-timer: -.02em;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px;
+  --pad-card: 20px; --pad-card-x: 20px; --pad-session: 16px; --pad-btn-x: 14px;
+  --radius-card: 8px; --radius-inner: 6px; --radius-btn: 6px; --radius-chip: 4px; --radius-block: 4px;
+  --radius-seg: 8px; --radius-seg-item: 6px; --radius-pill: 8px; --radius-mark: 4px;
+  --hairline: 1px; --card-border: 1px; --session-border: 1px; --ring-width: 2px;
+  --shadow-card: none; --shadow-btn: none; --shadow-seg: 0 0 0 1px hsl(var(--border));
+  --tl-gap: 6px; --tl-bg: hsl(var(--card)); --tl-border: 1px; --stripe: 3px;
+  --blk-bg: hsl(var(--card)); --blk-border: 1px; --blk-border-color: hsl(var(--border));
+  --blk-shadow: inset 3px 0 0 hsl(var(--c)); --blk-pad-left: 9px;
+  --ppm-desk: 1px; --ppm-phone: 1.1px;
+  --grid-lines: repeating-linear-gradient(to bottom, hsl(var(--border)) 0 1px, transparent 1px calc(30 * var(--ppm)),
+    hsl(var(--border) / .5) calc(30 * var(--ppm)) calc(30 * var(--ppm) + 1px), transparent calc(30 * var(--ppm) + 1px) calc(60 * var(--ppm)));
+  --icon-stroke: 1.5; --icon-cap: square; --icon-join: miter;
+  --motion-fast: 140ms; --ease: cubic-bezier(.3, 0, .2, 1);
+}
+:root[data-theme="dark"] {
+  --sidebar: 214 33% 8%;
+  --nav-active: 228 45% 19%;
+  --nav-active-foreground: 233 100% 87%;
+  --session-bg: 215 36% 9%;
+  --today-col: 215 37% 12%;
+  --border-strong: 214 19% 45%;
+  --background: 215 35% 7%;
+  --foreground: 212 41% 93%;
+  --card: 213 33% 11%;
+  --muted: 214 31% 15%;
+  --muted-foreground: 213 18% 65%;
+  --border: 215 29% 21%;
+  --primary: 233 100% 79%;
+  --primary-foreground: 215 35% 7%;
+  --secondary: 214 31% 16%;
+  --secondary-foreground: 212 41% 93%;
+  --accent: 179 53% 15%;
+  --accent-foreground: 174 62% 76%;
+  --ring: 233 100% 79%;
+  --destructive: 5 100% 76%;
+  --destructive-foreground: 6 62% 10%;
+  --cat-focus: 233 100% 79%;
+  --cat-study: 263 100% 81%;
+  --cat-admin: 213 18% 70%;
+  --cat-exercise: 154 54% 56%;
+  --cat-rest: 175 55% 53%;
+  --cat-personal: 333 79% 76%;
+  --status-done: 154 54% 56%;
+  --status-done-tint: 154 39% 12%;
+  --status-partial: 39 82% 66%;
+  --status-partial-tint: 40 38% 13%;
+  --status-skipped: 213 15% 66%;
+  --status-skipped-tint: 213 29% 13%;
+  --rest-tint: 182 48% 11%;
+}
