@@ -123,3 +123,7 @@ Noticed, out of scope: `Today.tsx` formats "today" with the browser's `new Date(
 - **Dark mode:** `.dark[data-look="f15"]` wins over `:root[data-look]`, and the boot script never touches `.dark`.
 - **Privacy:** no logging and no personal data; the fixtures are fictional.
 - **Tests:** 350 vitest passed, 0 skipped. Nothing was weakened or deleted; the F13 spec change is test-only.
+
+## Fix status (2026-11-22)
+Fixed: H1, M1, M2, M3, M5, L1 (font timing), L2, L4, L5 — see F15.md §11 "Review fixes".
+Waiting for the owner: M4 (not reproduced), L1 (unflagged fixes), L3 (bottom nav label), L6 (precache).
