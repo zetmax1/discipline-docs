@@ -39,7 +39,7 @@ Tools in this folder (`docs/release/`, Python 3 standard library only, never pri
 ### Migrations run from the pre-deploy step (`chore/predeploy-migrate` onwards)
 
 Once `chore/predeploy-migrate` is merged, `discipline-back`'s `railway.json` runs
-`["/app/migrate", "up"]` as the deploy's `preDeployCommand`: Railway runs it in the new image,
+`["/app/migrate up"]` (one string: Railway's schema allows at most one array item) as the deploy's `preDeployCommand`: Railway runs it in the new image,
 once, before that version takes traffic, so the schema is migrated by the same build that will
 serve it. A failed pre-deploy step stops the deploy and leaves the old version serving.
 
