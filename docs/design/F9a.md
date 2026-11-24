@@ -470,3 +470,68 @@ name, URL, host or UID. Replays (`Idempotency-Key`) record nothing twice.
    `commitment_exceptions` table (like `recurring_exceptions`), roughly +1 day of work.
    **Answer: ignore them, with a visible note.** Holidays and moved single classes are not
    imported as exceptions; no `commitment_exceptions` table now.
+
+## 13. Status (build, 2026-11-23)
+
+Branch `feat/F9a` in `discipline-back`, `discipline-py`, `discipline` and this docs repo, each from
+`main`. Every check command passes: back `make check` (20 packages, `go test -race`, govulncheck,
+gosec 0 new, no leaks), py `make check` (282 tests, ruff, mypy, pip-audit, bandit), web `npm run
+check` (262 unit + 48 Playwright). No skips. Screens in `F9a-screens/` (both widths).
+
+Because the contracts live in the web repo, the API and analytics checks were run with
+`CONTRACTS_DIR` / `ANALYTICS_CONTRACT` pointing at this branch's `discipline/contracts`; after the
+web merge they resolve by themselves.
+
+**Done**
+
+| Story | Repo · commit |
+|---|---|
+| Contracts (commitments, targets, calendar import, v2 request, 20 error codes, 2 events) | web `0ebcb42` |
+| S1 Commitments | back `2bc2123` (migration 00016, CRUD, occurrences, one expander, 100 limit, idempotent replay) · web `d352f25` |
+| S2 One-time browser import | back `34b35bd` · web `d352f25` |
+| S3 Weekly targets | back `34b35bd` (defaults with `isDefault`, reassign adds minutes) · web `d352f25` |
+| S4 Calendar import | back `a75f114` (AES-GCM URLs, SSRF fetcher), `353d997` (parser, zones, DST runs), `61be0c2` (preview/commit/sources, rate limits) · web `d352f25` |
+| S5 Smart Schedule from the server | back `9d5481c` · py `782ff33` (busy, rest day, focus cap) · web `d352f25` |
+| Owner 2: hatched commitments in the planner | web `d352f25` |
+| E2E (5 flows) + screenshots | web `05d7207` |
+
+**Decisions taken during the build**
+
+1. Migration number is **00016** (00015 was taken by F13's trigger fix); F13's contract step moves on.
+2. `GET /commitments/occurrences` reads from `startDate − 1`, so Monday shows the previous Sunday's
+   tail; validity and weekdays apply to the **start day**, and the morning part follows even past
+   `validTo` (§1 S1, tested).
+3. A commitment's kind has no FK to `categories`; the list shows the colour of the user's system
+   category of that kind, so F13's delete/reassign is untouched.
+4. Deleting a category with `?reassignTo=` adds its weekly minutes to the target category's, capped
+   at 80 h, in F13's transaction.
+5. VTIMEZONE observances are expanded from 1970 (same month/day/time), because rrule-go stops after
+   a few hundred yearly steps from 1601; the resulting offsets are identical.
+6. The preview's "edited in the app" uses `updated_at > last_fetched_at` for a linked source and
+   `updated_at > created_at + 1 s` for a file import (a file has no last fetch).
+7. The web sends `{ weekStart }` only when `FEATURE_F9A` is on **and** the user is signed in; the
+   legacy `{ commitments, goals }` body is still accepted by the API and by `discipline-py`.
+8. "Save plan" now also sends the kind's system `categoryId`, so plan blocks land in F13 categories.
+9. The flag-off Smart Schedule page is unchanged; its result section became a shared component
+   (`ScheduleResult`) used by both versions.
+10. Rate limits are applied inside the calendar handler (not as route middleware), because one
+    endpoint is both a parse (fails open) and a fetch (fails closed) depending on the body.
+
+**Deferred**
+
+- Daily refresh of linked calendars (M4 worker, §5) and `EXDATE`/moved instances (owner answer 4,
+  noted in the preview).
+- Export of `commitments`, `weekly_targets`, `category_targets`, `calendar_sources`: there is still
+  no user-data export endpoint (F13 deferred it too; VISION #6 — track before beta).
+- The contract step that drops the legacy `{ commitments, goals }` path (§11 step 5).
+
+**Owner steps**
+
+1. `openssl rand -base64 32` → Railway variable `CALENDAR_URL_KEY` on the **API** service (a
+   different value on staging and production). The API refuses to start with `FEATURE_F9A=true`
+   without it.
+2. `discipline-back`: merge; migration 00016 runs in the pre-deploy step
+   (`go run ./cmd/migrate up`). Leave `FEATURE_F9A` unset. Wait for a healthy deploy.
+3. `discipline-py`: merge, deploy. No new env vars.
+4. `discipline`: merge, deploy. No new env vars.
+5. Staging: `FEATURE_F9A=true` on the API service; walk the five E2E flows by hand; then production.
